@@ -7,9 +7,11 @@ public class Server {
 
     public static void main(String[] args){
         try(ServerSocket serverSocket = new ServerSocket(PORT)){
+            Socket client;
             //noinspection InfiniteLoopStatement
             while (true) {
-                try (Socket client = serverSocket.accept()) {
+                try {
+                    client = serverSocket.accept();
                     new ClientHandler(client).start();
                 } catch (IOException e) {
                     e.printStackTrace();
