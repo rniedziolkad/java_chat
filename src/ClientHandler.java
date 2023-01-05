@@ -31,7 +31,7 @@ public class ClientHandler extends Thread{
             try {
                 line = reader.readLine();
                 System.out.println("Odczytano: "+line);
-                if(line == null || line.equals("quit"))
+                if(line == null)
                     closeSocket();
 
             } catch (IOException e) {
