@@ -30,9 +30,10 @@ public class ClientHandler extends Thread{
         while (!clientSocket.isClosed()){
             try {
                 line = reader.readLine();
-                server.broadcastToConnected(line);
                 if(line == null)
                     closeSocket();
+                else
+                    server.broadcastToConnected(line);
 
             } catch (IOException e) {
                 System.out.println("Error: "+e.getMessage());
