@@ -24,6 +24,13 @@ public class Server {
         connectedClients.add(client);
     }
 
+    public void broadcastToConnected(String message){
+        System.out.println("Broadcasting: "+message);
+        for(ClientHandler client:connectedClients){
+            client.send(message);
+        }
+    }
+
     public static void main(String[] args){
         Server server = new Server(54321);
 
