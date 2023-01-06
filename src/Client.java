@@ -12,6 +12,8 @@ public class Client {
             System.out.println("Connected!");
             System.out.println(socket.getInetAddress() + ":" + socket.getPort());
             System.out.println("On local port: "+socket.getLocalPort());
+
+            new ClientReceiver(socket).start();
             Scanner scanner = new Scanner(System.in);
             String message = "Random Chat Protocol";
             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
