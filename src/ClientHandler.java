@@ -30,7 +30,7 @@ public class ClientHandler extends Thread{
         while (!clientSocket.isClosed()){
             try {
                 line = reader.readLine();
-                System.out.println("Odczytano: "+line);
+                server.broadcastToConnected(line);
                 if(line == null)
                     closeSocket();
 
@@ -52,5 +52,11 @@ public class ClientHandler extends Thread{
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public void send(String message){
+        System.out.println("sending: "+message+"...");
+        writer.println(message);
+        System.out.println("send: "+message);
     }
 }
