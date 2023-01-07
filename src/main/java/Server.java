@@ -33,6 +33,7 @@ public class Server {
 
     public static void main(String[] args){
         Server server = new Server(54321);
+        DBConnection.connect();
 
         try(ServerSocket serverSocket = new ServerSocket(server.getPort())){
             Socket clientSocket;
