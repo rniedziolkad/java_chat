@@ -1,24 +1,25 @@
-import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Server {
     private final int port;
-    private final ArrayList<ClientHandler> connectedClients;
+    private final List<ClientHandler> connectedClients;
 
     public Server(int port) {
         this.port = port;
-        this.connectedClients = new ArrayList<>();
+        this.connectedClients = new CopyOnWriteArrayList<>();
     }
 
     public int getPort() {
         return port;
     }
 
-    public ArrayList<ClientHandler> getConnectedClients() {
-        return connectedClients;
-    }
-
     public void addClient(ClientHandler client){
         connectedClients.add(client);
+    }
+
+    public void removeClient(ClientHandler client){
+        connectedClients.remove(client);
     }
 
     public void broadcastToConnected(String message){
@@ -26,5 +27,9 @@ public class Server {
         for(ClientHandler client:connectedClients){
             client.send(message);
         }
+    }
+
+    public int getNumberOfConnected(){
+        return connectedClients.size();
     }
 }
