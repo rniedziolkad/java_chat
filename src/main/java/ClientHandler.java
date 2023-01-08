@@ -26,6 +26,13 @@ public class ClientHandler extends Thread{
             System.out.println(e.getMessage());
             closeSocket();
         }
+        handleSocket();
+        System.out.println("Ending thread: "+this.getName()+"...");
+        server.removeClient(this);
+        System.out.println("Thread ended: "+this.getName());
+    }
+
+    private void handleSocket() {
         String line;
         while (!clientSocket.isClosed()){
             try {
@@ -40,9 +47,6 @@ public class ClientHandler extends Thread{
                 closeSocket();
             }
         }
-        System.out.println("Ending thread: "+this.getName()+"...");
-        server.removeClient(this);
-        System.out.println("Thread ended: "+this.getName());
     }
 
     private void closeSocket(){
