@@ -41,7 +41,7 @@ public class ClientHandler extends Thread{
             }
         }
         System.out.println("Ending thread: "+this.getName()+"...");
-        server.getConnectedClients().remove(this);
+        server.removeClient(this);
         System.out.println("Thread ended: "+this.getName());
     }
 
