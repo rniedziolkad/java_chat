@@ -62,7 +62,11 @@ public class ClientHandler extends Thread{
                     writer.println("LOGGING...");
                     login(tokens);
                 }
-                case "LOGOUT" -> writer.println("LOGGING OUT...");
+
+                case "LOGOUT" -> {
+                    writer.println("LOGGING OUT...");
+                    logout();
+                }
                 case "EXIT" -> {
                     writer.println("EXITING...");
                     closeSocket();
@@ -73,18 +77,22 @@ public class ClientHandler extends Thread{
         }
     }
 
-    private void login(String [] tokens){
-        if(tokens.length != 3){
+    private void login(String [] tokens) {
+        if (tokens.length != 3) {
             writer.println("Incorrect format. Expected: LOGIN user password");
             return;
         }
-        if (tokens[1].equals(tokens[2])){
+        if (tokens[1].equals(tokens[2])) {
             user = tokens[1];
-            writer.println("MSG Successful login as "+user);
-        }
-        else{
+            writer.println("MSG Successful login as " + user);
+        } else {
             writer.println("MSG Incorrect username or password");
         }
+
+    }
+    private void logout(){
+        user = null;
+        writer.println("MSG Successful logout");
     }
 
     private void closeSocket(){
