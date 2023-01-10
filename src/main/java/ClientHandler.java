@@ -52,45 +52,56 @@ public class ClientHandler extends Thread{
     }
 
     private void interpretCommand(String line) {
-        String [] tokens = line.split("\\s");
-        if (tokens.length<1)
-            writer.println("Incorrect format: "+ line);
+        String [] parts = line.split("\\s+", 2);
+        if (parts.length<1)
+            writer.println("ERROR Incorrect format: "+line);
         else{
-            String cmd = tokens[0];
-            switch (cmd) {
-                case "LOGIN" -> {
-                    writer.println("LOGGING...");
-                    login(tokens);
-                }
-
-                case "LOGOUT" -> {
-                    writer.println("LOGGING OUT...");
-                    logout();
-                }
-                case "EXIT" -> {
-                    writer.println("EXITING...");
-                    closeSocket();
-                }
-                case "BROADCAST" -> writer.println("BROADCASTING...");
-                default -> writer.println("Unknown command: " + line);
-            }
+            handleCommand(parts);
         }
     }
 
-    private void login(String [] tokens) {
-        if (tokens.length != 3) {
-            writer.println("Incorrect format. Expected: LOGIN user password");
+    private void handleCommand(String[] parts) {
+        String cmd = parts[0];
+        switch (cmd) {
+            case "LOGIN" -> {
+                if (parts.length == 2)
+                    login(parts[1]);
+                else
+                    writer.println("ERROR No arguments provided");
+            }
+            case "LOGOUT" -> logout();
+            case "EXIT" -> {
+                writer.println("EXITING...");
+                closeSocket();
+            }
+            case "BROADCAST" -> {
+                if (parts.length == 2)
+                    server.broadcastToConnected(parts[1]);
+                else
+                    writer.println("ERROR No message given");
+            }
+            default -> writer.println("ERROR Unknown command: " + cmd);
+        }
+    }
+
+    private void login(String args) {
+        String [] tokens = args.split("\\s+");
+        if (tokens.length != 2) {
+            writer.println("ERROR Incorrect format. Expected: LOGIN <user> <password>");
             return;
         }
-        if (tokens[1].equals(tokens[2])) {
-            user = tokens[1];
-            writer.println("MSG Successful login as " + user);
+
+        if (tokens[0].equals(tokens[1])) {
+            user = tokens[0];
+            writer.println("INFO Successful login as " + user);
+            server.addClient(this);
         } else {
-            writer.println("MSG Incorrect username or password");
+            writer.println("ERROR Incorrect username or password");
         }
     }
     private void logout(){
         user = null;
+        server.removeClient(this);
         writer.println("MSG Successful logout");
     }
 
