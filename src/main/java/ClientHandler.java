@@ -59,7 +59,10 @@ public class ClientHandler extends Thread{
             String cmd = tokens[0];
             switch (cmd) {
                 case "LOGIN" -> writer.println("LOGGING...");
-                case "LOGOUT" -> writer.println("LOGGING OUT...");
+                case "LOGOUT" -> {
+                    writer.println("LOGGING OUT...");
+                    logout();
+                }
                 case "EXIT" -> {
                     writer.println("EXITING...");
                     closeSocket();
@@ -68,6 +71,11 @@ public class ClientHandler extends Thread{
                 default -> writer.println("Unknown command: " + line);
             }
         }
+    }
+
+    private void logout(){
+        user = null;
+        writer.println("MSG Successful logout");
     }
 
     private void closeSocket(){
