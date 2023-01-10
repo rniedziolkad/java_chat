@@ -24,12 +24,23 @@ public class ClientReceiver extends Thread{
             try {
                 line = reader.readLine();
                 System.out.println(line);
-                if(line==null)
+                if(line==null) {
                     System.out.println("Server closed connection");
+                    closeSocket();
+                }
             } catch (IOException e) {
                 System.out.println("error: "+e.getMessage());
+                closeSocket();
             }
         }
         System.out.println("Closing receiver");
+    }
+
+    private void closeSocket(){
+        try {
+            socket.close();
+        } catch (IOException e) {
+            System.out.println("exception: "+e.getMessage());
+        }
     }
 }
