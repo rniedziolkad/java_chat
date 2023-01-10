@@ -1,13 +1,13 @@
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class Server {
     private final int port;
-    private final List<ClientHandler> connectedClients;
+    private final Set<ClientHandler> connectedClients;
 
     public Server(int port) {
         this.port = port;
-        this.connectedClients = new CopyOnWriteArrayList<>();
+        this.connectedClients = new CopyOnWriteArraySet<>();
     }
 
     public int getPort() {
@@ -16,10 +16,12 @@ public class Server {
 
     public void addClient(ClientHandler client){
         connectedClients.add(client);
+        System.out.println("Added client. Logged clients: "+getNumberOfConnected());
     }
 
     public void removeClient(ClientHandler client){
         connectedClients.remove(client);
+        System.out.println("Removed client. Logged clients: "+getNumberOfConnected());
     }
 
     public void broadcastToConnected(String message){
