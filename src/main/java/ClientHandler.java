@@ -9,10 +9,12 @@ public class ClientHandler extends Thread{
     private final Server server;
     private BufferedReader reader;
     private PrintWriter writer;
+    private String user;
 
     public ClientHandler(Socket clientSocket, Server server) {
         this.clientSocket = clientSocket;
         this.server = server;
+        this.user = null;
     }
 
     @Override
@@ -26,23 +28,46 @@ public class ClientHandler extends Thread{
             System.out.println(e.getMessage());
             closeSocket();
         }
+        handleSocket();
+        System.out.println("Ending thread: "+this.getName()+"...");
+        server.removeClient(this);
+        System.out.println("Thread ended: "+this.getName());
+    }
+
+    private void handleSocket() {
         String line;
         while (!clientSocket.isClosed()){
             try {
                 line = reader.readLine();
                 if(line == null)
                     closeSocket();
-                else
-                    server.broadcastToConnected(line);
-
+                else{
+                    interpretCommand(line);
+                }
             } catch (IOException e) {
                 System.out.println("Error: "+e.getMessage());
                 closeSocket();
             }
         }
-        System.out.println("Ending thread: "+this.getName()+"...");
-        server.getConnectedClients().remove(this);
-        System.out.println("Thread ended: "+this.getName());
+    }
+
+    private void interpretCommand(String line) {
+        String [] tokens = line.split("\\s");
+        if (tokens.length<1)
+            writer.println("Incorrect format: "+ line);
+        else{
+            String cmd = tokens[0];
+            switch (cmd) {
+                case "LOGIN" -> writer.println("LOGGING...");
+                case "LOGOUT" -> writer.println("LOGGING OUT...");
+                case "EXIT" -> {
+                    writer.println("EXITING...");
+                    closeSocket();
+                }
+                case "BROADCAST" -> writer.println("BROADCASTING...");
+                default -> writer.println("Unknown command: " + line);
+            }
+        }
     }
 
     private void closeSocket(){

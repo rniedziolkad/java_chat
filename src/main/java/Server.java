@@ -1,27 +1,25 @@
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Server {
     private final int port;
-    private final ArrayList<ClientHandler> connectedClients;
+    private final List<ClientHandler> connectedClients;
 
     public Server(int port) {
         this.port = port;
-        this.connectedClients = new ArrayList<>();
+        this.connectedClients = new CopyOnWriteArrayList<>();
     }
 
     public int getPort() {
         return port;
     }
 
-    public ArrayList<ClientHandler> getConnectedClients() {
-        return connectedClients;
-    }
-
     public void addClient(ClientHandler client){
         connectedClients.add(client);
+    }
+
+    public void removeClient(ClientHandler client){
+        connectedClients.remove(client);
     }
 
     public void broadcastToConnected(String message){
@@ -31,25 +29,7 @@ public class Server {
         }
     }
 
-    public static void main(String[] args){
-        Server server = new Server(54321);
-
-        try(ServerSocket serverSocket = new ServerSocket(server.getPort())){
-            Socket clientSocket;
-            //noinspection InfiniteLoopStatement
-            while (true) {
-                try {
-                    clientSocket = serverSocket.accept();
-                    ClientHandler newClient = new ClientHandler(clientSocket, server);
-                    newClient.start();
-                    server.addClient(newClient);
-                    System.out.println(server.getConnectedClients().size());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public int getNumberOfConnected(){
+        return connectedClients.size();
     }
 }

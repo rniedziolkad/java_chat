@@ -17,12 +17,12 @@ public class Client {
             Scanner scanner = new Scanner(System.in);
             String message = "Random Chat Protocol";
             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-            do {
-                writer.println(message);
+            while(!socket.isClosed() && !message.equals("EXIT")) {
                 message = scanner.nextLine();
-            } while (!message.equals("quit"));
+                writer.println(message);
+            }
         } catch (IOException e){
-            System.out.println(e.getMessage());
+            System.out.println("Exception IO: "+e.getMessage());
         }
 
     }
