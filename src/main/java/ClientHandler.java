@@ -88,7 +88,6 @@ public class ClientHandler extends Thread{
         } else {
             writer.println("MSG Incorrect username or password");
         }
-
     }
     private void logout(){
         user = null;
