@@ -9,10 +9,12 @@ public class ClientHandler extends Thread{
     private final Server server;
     private BufferedReader reader;
     private PrintWriter writer;
+    private String user;
 
     public ClientHandler(Socket clientSocket, Server server) {
         this.clientSocket = clientSocket;
         this.server = server;
+        this.user = null;
     }
 
     @Override
@@ -39,12 +41,31 @@ public class ClientHandler extends Thread{
                 line = reader.readLine();
                 if(line == null)
                     closeSocket();
-                else
-                    server.broadcastToConnected(line);
-
+                else{
+                    interpretCommand(line);
+                }
             } catch (IOException e) {
                 System.out.println("Error: "+e.getMessage());
                 closeSocket();
+            }
+        }
+    }
+
+    private void interpretCommand(String line) {
+        String [] tokens = line.split("\\s");
+        if (tokens.length<1)
+            writer.println("Incorrect format: "+ line);
+        else{
+            String cmd = tokens[0];
+            switch (cmd) {
+                case "LOGIN" -> writer.println("LOGGING...");
+                case "LOGOUT" -> writer.println("LOGGING OUT...");
+                case "EXIT" -> {
+                    writer.println("EXITING...");
+                    closeSocket();
+                }
+                case "BROADCAST" -> writer.println("BROADCASTING...");
+                default -> writer.println("Unknown command: " + line);
             }
         }
     }
