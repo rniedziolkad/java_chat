@@ -58,7 +58,10 @@ public class ClientHandler extends Thread{
         else{
             String cmd = tokens[0];
             switch (cmd) {
-                case "LOGIN" -> writer.println("LOGGING...");
+                case "LOGIN" -> {
+                    writer.println("LOGGING...");
+                    login(tokens);
+                }
                 case "LOGOUT" -> writer.println("LOGGING OUT...");
                 case "EXIT" -> {
                     writer.println("EXITING...");
@@ -67,6 +70,20 @@ public class ClientHandler extends Thread{
                 case "BROADCAST" -> writer.println("BROADCASTING...");
                 default -> writer.println("Unknown command: " + line);
             }
+        }
+    }
+
+    private void login(String [] tokens){
+        if(tokens.length != 3){
+            writer.println("Incorrect format. Expected: LOGIN user password");
+            return;
+        }
+        if (tokens[1].equals(tokens[2])){
+            user = tokens[1];
+            writer.println("MSG Successful login as "+user);
+        }
+        else{
+            writer.println("MSG Incorrect username or password");
         }
     }
 
