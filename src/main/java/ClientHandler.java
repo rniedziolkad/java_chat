@@ -19,8 +19,7 @@ public class ClientHandler extends Thread{
 
     @Override
     public void run() {
-        System.out.println("Obsługuję połączenie z:");
-        System.out.println(clientSocket.getInetAddress()+":"+clientSocket.getPort());
+        System.out.println("Connection from: "+clientSocket.getInetAddress()+":"+clientSocket.getPort());
         try {
             this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             this.writer = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -29,10 +28,9 @@ public class ClientHandler extends Thread{
             closeSocket();
         }
         handleSocket();
-        System.out.println("Ending thread: "+this.getName()+"...");
         if(user != null)
             server.removeClient(this);
-        System.out.println("Thread ended: "+this.getName());
+        System.out.println("Closed connection from: "+clientSocket.getInetAddress()+":"+clientSocket.getPort());
     }
 
     private void handleSocket() {
@@ -77,7 +75,7 @@ public class ClientHandler extends Thread{
             }
             case "BROADCAST" -> {
                 if (parts.length == 2)
-                    server.broadcastToConnected(parts[1]);
+                    server.broadcastToConnected("MSG "+parts[1]);
                 else
                     writer.println("ERROR No message given");
             }
@@ -103,16 +101,15 @@ public class ClientHandler extends Thread{
         }
     }
     private void logout(){
-        server.removeClient(this);
+        if(user != null)
+            server.removeClient(this);
         user = null;
         writer.println("INFO LOGOUT_SUCCESS");
     }
 
     private void closeSocket(){
         try {
-            System.out.println("Closing socket "+clientSocket.getInetAddress()+":"+clientSocket.getPort()+"...");
             clientSocket.close();
-            System.out.println("Socket closed: "+clientSocket.getInetAddress()+":"+clientSocket.getPort());
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
