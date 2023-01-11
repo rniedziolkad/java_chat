@@ -96,6 +96,7 @@ public class ClientHandler extends Thread{
             user = tokens[0];
             server.addClient(this);
             writer.println("INFO LOGIN_SUCCESS " + user);
+            server.getConnectedClients().forEachKey(16, (u)->send("EVENT USER_JOIN "+u));
         } else {
             writer.println("ERROR Incorrect username or password");
         }

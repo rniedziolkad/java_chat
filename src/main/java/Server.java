@@ -40,6 +40,10 @@ public class Server {
                 connection.send(message);
     }
 
+    public ConcurrentHashMap<String, CopyOnWriteArrayList<ClientHandler>> getConnectedClients() {
+        return connectedClients;
+    }
+
     public int getNumberOfConnected(){
         return connectedClients.size();
     }
