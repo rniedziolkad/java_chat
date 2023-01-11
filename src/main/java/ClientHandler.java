@@ -30,7 +30,8 @@ public class ClientHandler extends Thread{
         }
         handleSocket();
         System.out.println("Ending thread: "+this.getName()+"...");
-        server.removeClient(this);
+        if(user != null)
+            server.removeClient(this);
         System.out.println("Thread ended: "+this.getName());
     }
 
@@ -92,17 +93,19 @@ public class ClientHandler extends Thread{
         }
 
         if (tokens[0].equals(tokens[1])) {
+            if(user != null)
+                logout();
             user = tokens[0];
-            writer.println("INFO Successful login as " + user);
             server.addClient(this);
+            writer.println("INFO LOGIN_SUCCESS " + user);
         } else {
             writer.println("ERROR Incorrect username or password");
         }
     }
     private void logout(){
-        user = null;
         server.removeClient(this);
-        writer.println("MSG Successful logout");
+        user = null;
+        writer.println("INFO LOGOUT_SUCCESS");
     }
 
     private void closeSocket(){
@@ -116,8 +119,10 @@ public class ClientHandler extends Thread{
     }
 
     public void send(String message){
-        System.out.println("sending: "+message+"...");
         writer.println(message);
-        System.out.println("send: "+message);
+    }
+
+    public String getUser() {
+        return user;
     }
 }

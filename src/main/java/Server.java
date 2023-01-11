@@ -15,12 +15,19 @@ public class Server {
     }
 
     public void addClient(ClientHandler client){
+        for (ClientHandler c: connectedClients)
+            c.send("EVENT USER_JOIN "+client.getUser());
+
         connectedClients.add(client);
         System.out.println("Added client. Logged clients: "+getNumberOfConnected());
     }
 
     public void removeClient(ClientHandler client){
         connectedClients.remove(client);
+        if(client.getUser() != null)
+            for (ClientHandler c: connectedClients)
+                c.send("EVENT USER_EXIT "+client.getUser());
+
         System.out.println("Removed client. Logged clients: "+getNumberOfConnected());
     }
 
