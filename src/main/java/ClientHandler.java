@@ -19,8 +19,7 @@ public class ClientHandler extends Thread{
 
     @Override
     public void run() {
-        System.out.println("Obsługuję połączenie z:");
-        System.out.println(clientSocket.getInetAddress()+":"+clientSocket.getPort());
+        System.out.println("Connection from: "+clientSocket.getInetAddress()+":"+clientSocket.getPort());
         try {
             this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             this.writer = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -29,9 +28,9 @@ public class ClientHandler extends Thread{
             closeSocket();
         }
         handleSocket();
-        System.out.println("Ending thread: "+this.getName()+"...");
-        server.removeClient(this);
-        System.out.println("Thread ended: "+this.getName());
+        if(user != null)
+            server.removeClient(this);
+        System.out.println("Closed connection from: "+clientSocket.getInetAddress()+":"+clientSocket.getPort());
     }
 
     private void handleSocket() {
@@ -76,7 +75,7 @@ public class ClientHandler extends Thread{
             }
             case "BROADCAST" -> {
                 if (parts.length == 2)
-                    server.broadcastToConnected(parts[1]);
+                    server.broadcastToConnected("MSG "+parts[1]);
                 else
                     writer.println("ERROR No message given");
             }
@@ -92,32 +91,36 @@ public class ClientHandler extends Thread{
         }
 
         if (tokens[0].equals(tokens[1])) {
+            if(user != null)
+                logout();
             user = tokens[0];
-            writer.println("INFO Successful login as " + user);
             server.addClient(this);
+            writer.println("INFO LOGIN_SUCCESS " + user);
+            server.getConnectedClients().forEachKey(16, (u)->send("EVENT USER_JOIN "+u));
         } else {
             writer.println("ERROR Incorrect username or password");
         }
     }
     private void logout(){
+        if(user != null)
+            server.removeClient(this);
         user = null;
-        server.removeClient(this);
-        writer.println("MSG Successful logout");
+        writer.println("INFO LOGOUT_SUCCESS");
     }
 
     private void closeSocket(){
         try {
-            System.out.println("Closing socket "+clientSocket.getInetAddress()+":"+clientSocket.getPort()+"...");
             clientSocket.close();
-            System.out.println("Socket closed: "+clientSocket.getInetAddress()+":"+clientSocket.getPort());
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
     public void send(String message){
-        System.out.println("sending: "+message+"...");
         writer.println(message);
-        System.out.println("send: "+message);
+    }
+
+    public String getUser() {
+        return user;
     }
 }

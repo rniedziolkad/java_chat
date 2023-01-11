@@ -1,13 +1,13 @@
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Server {
     private final int port;
-    private final Set<ClientHandler> connectedClients;
+    private final ConcurrentHashMap<String, CopyOnWriteArrayList<ClientHandler>> connectedClients;
 
     public Server(int port) {
         this.port = port;
-        this.connectedClients = new CopyOnWriteArraySet<>();
+        this.connectedClients = new ConcurrentHashMap<>();
     }
 
     public int getPort() {
@@ -15,20 +15,33 @@ public class Server {
     }
 
     public void addClient(ClientHandler client){
-        connectedClients.add(client);
+        if(!connectedClients.containsKey(client.getUser())) {
+            connectedClients.put(client.getUser(), new CopyOnWriteArrayList<>());
+            broadcastToConnected("EVENT USER_JOIN "+client.getUser());
+        }
+        connectedClients.get(client.getUser()).add(client);
         System.out.println("Added client. Logged clients: "+getNumberOfConnected());
     }
 
     public void removeClient(ClientHandler client){
-        connectedClients.remove(client);
-        System.out.println("Removed client. Logged clients: "+getNumberOfConnected());
+        CopyOnWriteArrayList<ClientHandler> userConnections = connectedClients.get(client.getUser());
+        userConnections.remove(client);
+        if(userConnections.isEmpty()) {
+            connectedClients.remove(client.getUser());
+            broadcastToConnected("EVENT USER_EXIT "+client.getUser());
+            System.out.println("Removed client. Logged clients: "+getNumberOfConnected());
+        }
     }
 
     public void broadcastToConnected(String message){
         System.out.println("Broadcasting: "+message);
-        for(ClientHandler client:connectedClients){
-            client.send(message);
-        }
+        for (CopyOnWriteArrayList<ClientHandler> userConnections : connectedClients.values())
+            for (ClientHandler connection : userConnections)
+                connection.send(message);
+    }
+
+    public ConcurrentHashMap<String, CopyOnWriteArrayList<ClientHandler>> getConnectedClients() {
+        return connectedClients;
     }
 
     public int getNumberOfConnected(){
