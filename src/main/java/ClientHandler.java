@@ -3,18 +3,26 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.SQLException;
 
 public class ClientHandler extends Thread{
     private final Socket clientSocket;
     private final Server server;
     private BufferedReader reader;
     private PrintWriter writer;
-    private String user;
+    private final UserManager userManager;
 
     public ClientHandler(Socket clientSocket, Server server) {
+        UserManager uManager = null;
+        try {
+            uManager = new UserManager(server.getDbConnection());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         this.clientSocket = clientSocket;
         this.server = server;
-        this.user = null;
+        this.userManager = uManager;
     }
 
     @Override
@@ -28,7 +36,7 @@ public class ClientHandler extends Thread{
             closeSocket();
         }
         handleSocket();
-        if(user != null)
+        if(userManager.isUserLoggedIn())
             server.removeClient(this);
         System.out.println("Closed connection from: "+clientSocket.getInetAddress()+":"+clientSocket.getPort());
     }
@@ -89,22 +97,28 @@ public class ClientHandler extends Thread{
             writer.println("ERROR Incorrect format. Expected: LOGIN <user> <password>");
             return;
         }
+        if(userManager == null){
+            writer.println("ERROR Server side error. Unable to authenticate user");
+            return;
+        }
+        if(userManager.isUserLoggedIn()) {
+            writer.println("ERROR Already logged in");
+            return;
+        }
 
-        if (tokens[0].equals(tokens[1])) {
-            if(user != null)
-                logout();
-            user = tokens[0];
+        try{
+            userManager.login(tokens[0], tokens[1]);
             server.addClient(this);
-            writer.println("INFO LOGIN_SUCCESS " + user);
+            writer.println("INFO LOGIN_SUCCESS " + userManager.getCurrentUser());
             server.getConnectedClients().forEachKey(16, (u)->send("EVENT USER_JOIN "+u));
-        } else {
-            writer.println("ERROR Incorrect username or password");
+        } catch (AuthDataException | SQLException e) {
+            writer.println("ERROR "+e.getMessage());
         }
     }
     private void logout(){
-        if(user != null)
+        if(userManager.isUserLoggedIn())
             server.removeClient(this);
-        user = null;
+        userManager.logout();
         writer.println("INFO LOGOUT_SUCCESS");
     }
 
@@ -121,6 +135,6 @@ public class ClientHandler extends Thread{
     }
 
     public String getUser() {
-        return user;
+        return userManager.getCurrentUser();
     }
 }
