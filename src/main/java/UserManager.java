@@ -1,6 +1,9 @@
+import org.sqlite.SQLiteException;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +14,7 @@ public class UserManager {
     private final PreparedStatement loginStatement;
     private final PreparedStatement registerStatement;
     private final MessageDigest hashFunction;
+    private final SecureRandom random;
     private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.UTF_8);
 
     public UserManager(Connection dbConnection) throws SQLException{
@@ -26,15 +30,13 @@ public class UserManager {
             System.out.println("Unable to create hash function");
         }
         this.hashFunction = md;
+        this.random = new SecureRandom();
     }
 
     public void login(String username, String password) throws AuthDataException, SQLException {
         loginStatement.setString(1, username);
-        String passwordHash = bytesToHex(hashPassword(password));
-        loginStatement.setBytes(2, hashPassword(password));
-
-        System.out.println("username: "+username);
-        System.out.println("hash: "+ passwordHash);
+        byte [] salt = getUserSalt(username);
+        loginStatement.setBytes(2, hashPassword(password, salt));
 
         ResultSet resultSet = loginStatement.executeQuery();
         if (!resultSet.next()){
@@ -44,12 +46,15 @@ public class UserManager {
     }
     public void register(String username, String password) throws UserExistsException, SQLException {
         registerStatement.setString(1, username);
-        registerStatement.setString(2, password);
+        byte [] salt = generateSalt();
+        registerStatement.setBytes(2, hashPassword(password, new byte[0]));
+        registerStatement.setBytes(3, new byte[0]);
+
         try {
             registerStatement.executeUpdate();
             System.out.println("Registered new user: "+username);
-        }catch (SQLException e){
-            if (e.getErrorCode() == 19)
+        }catch (SQLiteException e){
+            if (e.getResultCode().code == 1555)
                 throw new UserExistsException();
 
             throw e;
@@ -67,11 +72,22 @@ public class UserManager {
         return currentUser;
     }
 
-    private byte [] hashPassword(String password){
+    private byte [] hashPassword(String password, byte [] salt){
         if(hashFunction == null)
             return password.getBytes(StandardCharsets.UTF_8);
 
+        hashFunction.update(salt);
         return hashFunction.digest(password.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private byte [] generateSalt(){
+        byte [] salt = new byte[16];
+        random.nextBytes(salt);
+        return salt;
+    }
+
+    private byte [] getUserSalt(String user){
+        return new byte[0];
     }
 
     private String bytesToHex(byte[] bytes) {
@@ -83,4 +99,5 @@ public class UserManager {
         }
         return new String(hexChars, StandardCharsets.UTF_8);
     }
+
 }
