@@ -1,13 +1,16 @@
+import java.sql.Connection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Server {
     private final int port;
     private final ConcurrentHashMap<String, CopyOnWriteArrayList<ClientHandler>> connectedClients;
+    private final Connection dbConnection;
 
-    public Server(int port) {
+    public Server(int port, Connection dbConnection) {
         this.port = port;
         this.connectedClients = new ConcurrentHashMap<>();
+        this.dbConnection = dbConnection;
     }
 
     public int getPort() {
@@ -46,5 +49,9 @@ public class Server {
 
     public int getNumberOfConnected(){
         return connectedClients.size();
+    }
+
+    public Connection getDbConnection(){
+        return dbConnection;
     }
 }
