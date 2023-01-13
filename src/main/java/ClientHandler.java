@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.SQLException;
 
 public class ClientHandler extends Thread{
     private final Socket clientSocket;
@@ -12,9 +13,16 @@ public class ClientHandler extends Thread{
     private final UserManager userManager;
 
     public ClientHandler(Socket clientSocket, Server server) {
+        UserManager uManager = null;
+        try {
+            uManager = new UserManager(server.getDbConnection());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         this.clientSocket = clientSocket;
         this.server = server;
-        this.userManager = new UserManager(server.getDbConnection());
+        this.userManager = uManager;
     }
 
     @Override
@@ -89,6 +97,10 @@ public class ClientHandler extends Thread{
             writer.println("ERROR Incorrect format. Expected: LOGIN <user> <password>");
             return;
         }
+        if(userManager == null){
+            writer.println("ERROR Server side error. Unable to authenticate user");
+            return;
+        }
         if(userManager.isUserLoggedIn()) {
             writer.println("ERROR Already logged in");
             return;
@@ -99,7 +111,7 @@ public class ClientHandler extends Thread{
             server.addClient(this);
             writer.println("INFO LOGIN_SUCCESS " + userManager.getCurrentUser());
             server.getConnectedClients().forEachKey(16, (u)->send("EVENT USER_JOIN "+u));
-        } catch (AuthDataException e) {
+        } catch (AuthDataException | SQLException e) {
             writer.println("ERROR "+e.getMessage());
         }
     }
