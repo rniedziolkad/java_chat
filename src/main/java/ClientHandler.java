@@ -76,6 +76,12 @@ public class ClientHandler extends Thread{
                 else
                     writer.println("ERROR No arguments provided");
             }
+            case "REGISTER" -> {
+                if (parts.length == 2)
+                    register(parts[1]);
+                else
+                    writer.println("ERROR No arguments provided");
+            }
             case "LOGOUT" -> logout();
             case "EXIT" -> {
                 writer.println("EXITING...");
@@ -111,10 +117,36 @@ public class ClientHandler extends Thread{
             server.addClient(this);
             writer.println("INFO LOGIN_SUCCESS " + userManager.getCurrentUser());
             server.getConnectedClients().forEachKey(16, (u)->send("EVENT USER_JOIN "+u));
-        } catch (AuthDataException | SQLException e) {
+        } catch (AuthDataException e) {
             writer.println("ERROR "+e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Login error: "+e.getMessage());
+            writer.println("ERROR Server side error. Unable to authenticate user");
         }
     }
+
+    private void register(String args){
+        String [] tokens = args.split("\\s+");
+        if (tokens.length != 2) {
+            writer.println("ERROR Incorrect format. Expected: REGISTER <user> <password>");
+            return;
+        }
+        if(userManager == null){
+            writer.println("ERROR Server side error. Unable to register user");
+            return;
+        }
+
+        try{
+            userManager.register(tokens[0], tokens[1]);
+            writer.println("INFO REGISTER_SUCCESS "+tokens[0]);
+        } catch (UserExistsException e) {
+            writer.println(e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Register error: "+e.getMessage());
+            writer.println("ERROR Server side error. Unable to register user");
+        }
+    }
+
     private void logout(){
         if(userManager.isUserLoggedIn())
             server.removeClient(this);

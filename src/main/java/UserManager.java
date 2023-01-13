@@ -6,10 +6,14 @@ import java.sql.SQLException;
 public class UserManager {
     private String currentUser;
     private final PreparedStatement loginStatement;
+    private final PreparedStatement registerStatement;
 
     public UserManager(Connection dbConnection) throws SQLException{
         this.currentUser = null;
-        this.loginStatement = dbConnection.prepareStatement("SELECT * FROM Users WHERE username = ? AND password_hash = ?");
+        String loginQuery = "SELECT * FROM Users WHERE username = ? AND password_hash = ?";
+        String registerQuery = "INSERT INTO Users VALUES (?, ?)";
+        this.loginStatement = dbConnection.prepareStatement(loginQuery);
+        this.registerStatement = dbConnection.prepareStatement(registerQuery);
     }
 
     public void login(String username, String password) throws AuthDataException, SQLException {
@@ -19,11 +23,20 @@ public class UserManager {
         if (!resultSet.next()){
             throw new AuthDataException();
         }
-        System.out.println(resultSet.getString(1)+ " "+resultSet.getString(2));
         this.currentUser = username;
     }
-    public void register(String username, String password) throws UserExistsException{
+    public void register(String username, String password) throws UserExistsException, SQLException {
+        registerStatement.setString(1, username);
+        registerStatement.setString(2, password);
+        try {
+            registerStatement.executeUpdate();
+            System.out.println("Registered new user: "+username);
+        }catch (SQLException e){
+            if (e.getErrorCode() == 19)
+                throw new UserExistsException();
 
+            throw e;
+        }
     }
     public void logout(){
         currentUser = null;
