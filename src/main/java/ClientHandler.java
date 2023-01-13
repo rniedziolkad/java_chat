@@ -17,6 +17,7 @@ public class ClientHandler extends Thread{
         try {
             uManager = new UserManager(server.getDbConnection());
         } catch (SQLException e) {
+            System.out.println("Unable to create user manager");
             e.printStackTrace();
         }
 
