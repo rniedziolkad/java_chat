@@ -1,3 +1,5 @@
+package random.server;
+
 import org.sqlite.SQLiteException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -92,7 +94,6 @@ public class UserManager {
         saltStatement.setString(1, user);
         ResultSet resultSet = saltStatement.executeQuery();
         if(resultSet.next()) {
-            System.out.println(resultSet);
             return resultSet.getBytes(1);
         }
         return null;

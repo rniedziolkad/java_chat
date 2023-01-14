@@ -1,3 +1,5 @@
+package random.server;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -105,7 +107,7 @@ public class ClientHandler extends Thread{
             return;
         }
         if(userManager == null){
-            writer.println("ERROR Server side error. Unable to authenticate user");
+            writer.println("ERROR random.server.Server side error. Unable to authenticate user");
             return;
         }
         if(userManager.isUserLoggedIn()) {
@@ -122,7 +124,7 @@ public class ClientHandler extends Thread{
             writer.println("ERROR "+e.getMessage());
         } catch (SQLException e) {
             System.out.println("Login error: "+e.getMessage());
-            writer.println("ERROR Server side error. Unable to authenticate user");
+            writer.println("ERROR random.server.Server side error. Unable to authenticate user");
         }
     }
 
@@ -133,7 +135,7 @@ public class ClientHandler extends Thread{
             return;
         }
         if(userManager == null){
-            writer.println("ERROR Server side error. Unable to register user");
+            writer.println("ERROR random.server.Server side error. Unable to register user");
             return;
         }
 
@@ -144,7 +146,7 @@ public class ClientHandler extends Thread{
             writer.println(e.getMessage());
         } catch (SQLException e) {
             System.out.println("Register error: "+e.getMessage());
-            writer.println("ERROR Server side error. Unable to register user");
+            writer.println("ERROR random.server.Server side error. Unable to register user");
         }
     }
 

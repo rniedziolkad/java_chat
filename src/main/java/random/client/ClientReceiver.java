@@ -1,3 +1,5 @@
+package random.client;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,7 +27,7 @@ public class ClientReceiver extends Thread{
                 line = reader.readLine();
                 System.out.println(line);
                 if(line==null) {
-                    System.out.println("Server closed connection");
+                    System.out.println("random.server.Server closed connection");
                     closeSocket();
                 }
             } catch (IOException e) {
