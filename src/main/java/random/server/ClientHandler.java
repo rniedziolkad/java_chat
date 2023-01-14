@@ -86,10 +86,7 @@ public class ClientHandler extends Thread{
                     writer.println("ERROR No arguments provided");
             }
             case "LOGOUT" -> logout();
-            case "EXIT" -> {
-                writer.println("EXITING...");
-                closeSocket();
-            }
+            case "EXIT" -> closeSocket();
             case "BROADCAST" -> {
                 if (parts.length == 2)
                     server.broadcastToConnected("MSG "+parts[1]);
@@ -107,7 +104,7 @@ public class ClientHandler extends Thread{
             return;
         }
         if(userManager == null){
-            writer.println("ERROR random.server.Server side error. Unable to authenticate user");
+            writer.println("ERROR Server side error. Unable to authenticate user");
             return;
         }
         if(userManager.isUserLoggedIn()) {
@@ -117,14 +114,14 @@ public class ClientHandler extends Thread{
 
         try{
             userManager.login(tokens[0], tokens[1]);
+            writer.println("LOGIN_SUCCESS " + userManager.getCurrentUser());
             server.addClient(this);
-            writer.println("INFO LOGIN_SUCCESS " + userManager.getCurrentUser());
-            server.getConnectedClients().forEachKey(16, (u)->send("EVENT USER_JOIN "+u));
+            server.getConnectedClients().forEachKey(4, (u)->send("EVENT USER_JOIN "+u));
         } catch (AuthDataException e) {
             writer.println("ERROR "+e.getMessage());
         } catch (SQLException e) {
             System.out.println("Login error: "+e.getMessage());
-            writer.println("ERROR random.server.Server side error. Unable to authenticate user");
+            writer.println("ERROR Server side error. Unable to authenticate user");
         }
     }
 
@@ -135,18 +132,18 @@ public class ClientHandler extends Thread{
             return;
         }
         if(userManager == null){
-            writer.println("ERROR random.server.Server side error. Unable to register user");
+            writer.println("ERROR Server side error. Unable to register user");
             return;
         }
 
         try{
             userManager.register(tokens[0], tokens[1]);
-            writer.println("INFO REGISTER_SUCCESS "+tokens[0]);
+            writer.println("REGISTER_SUCCESS "+tokens[0]);
         } catch (UserExistsException e) {
             writer.println(e.getMessage());
         } catch (SQLException e) {
             System.out.println("Register error: "+e.getMessage());
-            writer.println("ERROR random.server.Server side error. Unable to register user");
+            writer.println("ERROR Server side error. Unable to register user");
         }
     }
 
@@ -154,7 +151,7 @@ public class ClientHandler extends Thread{
         if(userManager.isUserLoggedIn())
             server.removeClient(this);
         userManager.logout();
-        writer.println("INFO LOGOUT_SUCCESS");
+        writer.println("LOGOUT_SUCCESS");
     }
 
     private void closeSocket(){
