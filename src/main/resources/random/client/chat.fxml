@@ -55,7 +55,7 @@
         </HBox>
     </VBox>
     <VBox HBox.hgrow="ALWAYS">
-        <ListView fx:id="chatMessagesList" focusTraversable="false" style="-fx-background-color: #2d2d2d; -fx-control-inner-background: transparent;" VBox.vgrow="ALWAYS">
+        <ListView fx:id="chatMessagesList" focusTraversable="false" style="-fx-background-color: #2d2d2d; -fx-control-inner-background: transparent;" stylesheets="@chat.css" VBox.vgrow="ALWAYS">
             <effect>
                 <InnerShadow blurType="GAUSSIAN" height="64.0" offsetY="-2.0" radius="15.5" width="0.0">
                     <color>

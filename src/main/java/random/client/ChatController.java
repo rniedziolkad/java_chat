@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
@@ -25,6 +26,7 @@ public class ChatController{
         messageInput.clear();
         Label text = new Label("Username: "+message);
         text.setWrapText(true);
+        text.setTextFill(new Color(1,1,1,1));
         AnchorPane messageBox = new AnchorPane(text);
         AnchorPane.setLeftAnchor(text, 0.0);
         AnchorPane.setRightAnchor(text, 0.0);
