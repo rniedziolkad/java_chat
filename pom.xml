@@ -6,7 +6,7 @@
 
     <name>Random Chat Application</name>
 
-    <groupId>randomId</groupId>
+    <groupId>random</groupId>
     <artifactId>Chat</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -53,7 +53,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.example.demo/com.example.demo.HelloApplication</mainClass>
+                            <mainClass>random.client/random.client.ClientMain</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
