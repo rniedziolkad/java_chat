@@ -29,6 +29,8 @@ public class ClientMain extends Application {
         stage.setTitle("Random Chat");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("chat.fxml"));
         Parent main = loader.load();
+        ChatController controller = loader.getController();
+        controller.setItems();
         Scene scene = new Scene(main);
 
         stage.setScene(scene);
