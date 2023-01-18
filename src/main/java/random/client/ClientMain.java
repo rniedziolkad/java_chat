@@ -11,8 +11,12 @@ public class ClientMain {
     public static void main(String[] args) {
         try (Client client = new Client(HOST, SERVER_PORT)){
             client.login("admin", "admin");
-            sleep(1000*10);
+            sleep(1000*3);
             client.logout();
+            sleep(1000);
+            client.login("user", "user");
+            client.logout();
+            sleep(1000*2);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException ignored) {
