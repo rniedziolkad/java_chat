@@ -18,19 +18,23 @@ public class Client implements AutoCloseable{
         this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.user = null;
     }
-    public void login(String username, String password) throws IOException {
+    public void login(String username, String password) throws IOException, AuthError {
         writer.println("LOGIN "+username+" "+password);
         String response = reader.readLine();
         String errMsg;
         if(response.equals("LOGIN_SUCCESS "+username)){
+
             this.user = username;
             System.out.println("Logged in as "+username);
             this.receiver = new ClientReceiver(this);
             receiver.start();
+
             return;
         }
-        else if(response.startsWith("ERROR"))
+        else if(response.startsWith("ERROR")) {
             errMsg = response.split("\\s+", 2)[1];
+            throw new AuthError(errMsg);
+        }
         else
             errMsg = "Incorrect message received: "+response;
 

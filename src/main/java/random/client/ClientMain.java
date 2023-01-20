@@ -24,17 +24,23 @@ public class ClientMain extends Application {
     public void start(Stage stage) {
         try{
             client = new Client(HOST, SERVER_PORT);
-            client.login("admin", "admin");
+        } catch (IOException e) {
+            client = null;
+            System.err.println("Unable to connect to server: "+e.getMessage());
+        }
 
+        try{
             stage.setTitle("Random Chat");
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("chat.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("login.fxml"));
             Parent main = loader.load();
-            ChatController controller = loader.getController();
+            LoginController controller = loader.getController();
             controller.setClient(client);
-            Scene scene = new Scene(main);
 
+            Scene scene = new Scene(main);
             stage.setScene(scene);
             stage.show();
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,7 +48,8 @@ public class ClientMain extends Application {
 
     @Override
     public void stop() throws Exception {
-        client.logout();
+        if(client != null)
+            client.logout();
         super.stop();
     }
 }
