@@ -14,14 +14,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class ChatController implements MessageListener{
+public class ChatController implements MessageListener, UserEventListener{
     private Client client;
     @FXML
     private TextField messageInput;
 
     private final ObservableList<HBox> messages = FXCollections.observableArrayList(new ArrayList<>());
+    private final ObservableList<String> onlineUsers = FXCollections.observableArrayList(new ArrayList<>());
     @FXML
     private ListView<HBox> chatMessagesList;
+    @FXML
+    private ListView<String> lvOnlineUser;
 
     @FXML
     protected void onSend(){
@@ -31,9 +34,15 @@ public class ChatController implements MessageListener{
             client.send(message);
         }
     }
+    @FXML
+    protected void onLogout(){
+        if(client!=null)
+            client.logout();
+    }
 
     public void initialize() {
         chatMessagesList.setItems(messages);
+        lvOnlineUser.setItems(onlineUsers);
     }
 
     public void setClient(Client client) {
@@ -41,7 +50,6 @@ public class ChatController implements MessageListener{
     }
     @Override
     public void notifyAboutNewMessage(String fromUser, String message) {
-        System.out.println("IN CONTROLLER");
         Platform.runLater(()->{
             HBox messageHBox = new HBox();
             try {
@@ -55,6 +63,15 @@ public class ChatController implements MessageListener{
             }
             messages.add(messageHBox);
         });
+    }
 
+    @Override
+    public void userJoin(String user) {
+        Platform.runLater(()-> onlineUsers.add(user));
+    }
+
+    @Override
+    public void userExit(String user) {
+        Platform.runLater(()-> onlineUsers.remove(user));
     }
 }

@@ -54,7 +54,7 @@ public class Client implements AutoCloseable{
         }
     }
 
-    private void setUserEventListenersExit(String user){
+    private void userEventListenersExit(String user){
         for(UserEventListener listener: userEventListeners){
             listener.userExit(user);
         }
@@ -92,16 +92,26 @@ public class Client implements AutoCloseable{
         try {
             while (!socket.isClosed() && (msg = reader.readLine()) != null) {
                 String [] parts = msg.split("\\s+", 2);
-                if(parts[0].equals("LOGOUT_SUCCESS")) {
-                    userExit();
-                    return;
-                } else if (parts[0].equals("MSG")) {
-                    parts = parts[1].split("\\s+", 2);
-                    notifyMessageListeners(parts[0], parts[1]);
+                switch (parts[0]) {
+                    case "LOGOUT_SUCCESS" -> {
+                        userExit();
+                        return;
+                    }
+                    case "MSG" -> {
+                        parts = parts[1].split("\\s+", 2);
+                        notifyMessageListeners(parts[0], parts[1]);
+                    }
+                    case "ERROR" -> System.err.println(parts[1]);
+                    case "EVENT" -> {
+                        parts = parts[1].split("\\s+", 2);
+                        if(parts[0].equals("USER_EXIT"))
+                            userEventListenersExit(parts[1]);
+                        else if (parts[0].equals("USER_JOIN"))
+                            userEventListenersJoin(parts[1]);
+                        else
+                            System.out.println("Received event: "+parts[0]);
+                    }
                 }
-
-                System.out.println("Received message:");
-                System.out.println(msg);
             }
 
             close();
