@@ -23,26 +23,29 @@ public class ClientMain extends Application {
     @Override
     public void start(Stage stage) {
         try{
-            client = new Client(HOST, SERVER_PORT);
-            client.login("admin", "admin");
-
             stage.setTitle("Random Chat");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("chat.fxml"));
             Parent main = loader.load();
             ChatController controller = loader.getController();
-            controller.setClient(client);
             Scene scene = new Scene(main);
-
             stage.setScene(scene);
             stage.show();
+
+            client = new Client(HOST, SERVER_PORT);
+            controller.setClient(client);
+            client.registerMessageListener(controller);
+            client.registerUserEvenListener(controller);
+            client.login("admin", "admin");
         } catch (IOException e) {
             e.printStackTrace();
+
         }
     }
 
     @Override
     public void stop() throws Exception {
-        client.logout();
+        if(client != null)
+            client.logout();
         super.stop();
     }
 }

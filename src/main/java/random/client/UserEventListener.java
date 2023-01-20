@@ -1,6 +1,6 @@
 package random.client;
 
 public interface UserEventListener {
-    void join();
-    void exit();
+    void userJoin(String user);
+    void userExit(String user);
 }

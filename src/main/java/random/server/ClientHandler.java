@@ -89,7 +89,7 @@ public class ClientHandler extends Thread{
             case "EXIT" -> closeSocket();
             case "BROADCAST" -> {
                 if (parts.length == 2)
-                    server.broadcastToConnected("MSG "+parts[1]);
+                    server.broadcastToConnected("MSG "+userManager.getCurrentUser()+" "+parts[1]);
                 else
                     writer.println("ERROR No message given");
             }
