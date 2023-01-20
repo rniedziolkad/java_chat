@@ -13,27 +13,36 @@ public class ClientMain extends Application {
     private static final int SERVER_PORT = 54321;
     private static final String HOST = "localhost";
 
+    private Client client;
+
     public static void main(String[] args) {
-        try (Client client = new Client(HOST, SERVER_PORT)){
-            client.login("admin", "admin");
-            launch();
-            client.logout();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        launch();
         System.out.println("EXITING APP...");
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
-        stage.setTitle("Random Chat");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("chat.fxml"));
-        Parent main = loader.load();
-        ChatController controller = loader.getController();
-        controller.setItems();
-        Scene scene = new Scene(main);
+    public void start(Stage stage) {
+        try{
+            client = new Client(HOST, SERVER_PORT);
+            client.login("admin", "admin");
 
-        stage.setScene(scene);
-        stage.show();
+            stage.setTitle("Random Chat");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("chat.fxml"));
+            Parent main = loader.load();
+            ChatController controller = loader.getController();
+            controller.setClient(client);
+            Scene scene = new Scene(main);
+
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void stop() throws Exception {
+        client.logout();
+        super.stop();
     }
 }

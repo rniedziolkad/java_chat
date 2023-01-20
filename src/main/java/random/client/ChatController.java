@@ -3,43 +3,50 @@ package random.client;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ChatController{
+    private Client client;
     @FXML
     private TextField messageInput;
 
-    private final ObservableList<AnchorPane> messages = FXCollections.observableArrayList(new ArrayList<>());
+    private final ObservableList<HBox> messages = FXCollections.observableArrayList(new ArrayList<>());
     @FXML
-    private ListView<AnchorPane> chatMessagesList;
+    private ListView<HBox> chatMessagesList;
 
     @FXML
     protected void onSend(){
         String message = messageInput.getText();
-        System.out.println(message);
         messageInput.clear();
-        Label text = new Label("Username: "+message);
-        text.setWrapText(true);
-        text.setTextFill(new Color(1,1,1,1));
-        AnchorPane messageBox = new AnchorPane(text);
-        AnchorPane.setLeftAnchor(text, 0.0);
-        AnchorPane.setRightAnchor(text, 0.0);
-        AnchorPane.setTopAnchor(text, 0.0);
-        AnchorPane.setBottomAnchor(text, 0.0);
-        messageBox.setMinWidth(0);
-        messageBox.setPrefWidth(1);
-        messages.add(messageBox);
+        if(client != null) {
+            client.send(message);
+        }
+        HBox messageHBox = new HBox();
+        try {
+            messageHBox = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("message.fxml")));
+            Label messageLabel = (Label) messageHBox.getChildren().get(1);
+            messageLabel.setText(message);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+        messages.add(messageHBox);
         chatMessagesList.scrollTo(messages.size());
     }
 
 
-    public void setItems() {
+    public void initialize() {
         chatMessagesList.setItems(messages);
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

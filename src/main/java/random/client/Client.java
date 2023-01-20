@@ -37,7 +37,7 @@ public class Client implements AutoCloseable{
         System.err.println(errMsg);
     }
 
-    public void logout() throws IOException {
+    public void logout() {
         writer.println("LOGOUT");
     }
 
@@ -64,10 +64,13 @@ public class Client implements AutoCloseable{
         }catch (IOException e){
             System.out.println("error reading: "+e.getMessage());
         }
-
-
-
         user = null;
+    }
+
+    public void send(String message){
+        if(message != null && !message.isEmpty() && !message.isBlank()){
+            writer.println("BROADCAST "+message);
+        }
     }
 
     @Override
