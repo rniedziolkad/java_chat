@@ -60,26 +60,38 @@ public class Client implements AutoCloseable{
         }
     }
 
-    public void login(String username, String password) throws IOException, AuthError {
+    public boolean login(String username, String password) throws IOException, AuthError {
         writer.println("LOGIN "+username+" "+password);
         String response = reader.readLine();
         String errMsg;
         if(response.equals("LOGIN_SUCCESS "+username)){
-
             this.user = username;
-            System.out.println("Logged in as "+username);
             this.receiver = new ClientReceiver(this);
-
-            return;
-        }
-        else if(response.startsWith("ERROR")) {
+            return true;
+        } else if(response.startsWith("ERROR")) {
             errMsg = response.split("\\s+", 2)[1];
             throw new AuthError(errMsg);
-        }
-        else
+        } else
             errMsg = "Incorrect message received: "+response;
 
         System.err.println(errMsg);
+        return false;
+    }
+
+    public boolean register(String username, String password) throws IOException, AuthError {
+        writer.println("REGISTER "+username+" "+password);
+        String response = reader.readLine();
+        String errMsg;
+        if(response.equals("REGISTER_SUCCESS "+username)){
+            return true;
+        } else if (response.startsWith("ERROR")) {
+            errMsg = response.split("\\s+", 2)[1];
+            throw new AuthError(errMsg);
+        } else
+            errMsg = "Incorrect message received: "+response;
+
+        System.err.println(errMsg);
+        return false;
     }
 
     public void logout() {
@@ -91,7 +103,7 @@ public class Client implements AutoCloseable{
             listener.userExit(user);
         }
         this.user = null;
-        System.out.println("Logged out of app");
+        this.receiver = null;
     }
 
     public void readCommands(){
@@ -120,7 +132,6 @@ public class Client implements AutoCloseable{
                     }
                 }
             }
-
             close();
         }catch (IOException e){
             System.out.println("error reading: "+e.getMessage());

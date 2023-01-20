@@ -22,14 +22,19 @@
             <Cursor fx:constant="TEXT" />
          </cursor>
       </PasswordField>
-      <Button maxWidth="160.0" minWidth="120.0" mnemonicParsing="false" onAction="#onLogin" prefWidth="160.0" style="-fx-background-color: #1ddddd;" text="Login">
+      <PasswordField fx:id="passwordField2" layoutX="80.0" layoutY="67.0" maxWidth="160.0" minWidth="120.0" onAction="#onRegister" prefWidth="160.0" promptText="Confirm Password" style="-fx-background-color: #3d3d3d; -fx-border-color: #5d5d5d; -fx-text-fill: #ffffff;">
+         <cursor>
+            <Cursor fx:constant="TEXT" />
+         </cursor>
+      </PasswordField>
+      <Button maxWidth="160.0" minWidth="120.0" mnemonicParsing="false" onAction="#onRegister" prefWidth="160.0" style="-fx-background-color: #1ddddd;" text="Register">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
       <Label fx:id="errorLabel" alignment="TOP_CENTER" textFill="WHITE" />
    </VBox>
-   <Button layoutX="234.0" layoutY="14.0" mnemonicParsing="false" onAction="#onGoRegister" style="-fx-background-color: #1ddddd;" text="Register &gt;" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
+   <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#onBackLogin" style="-fx-background-color: #1ddddd;" text="&lt; Login" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="16.0">
       <cursor>
          <Cursor fx:constant="HAND" />
       </cursor></Button>
