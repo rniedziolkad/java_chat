@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="500.0" prefWidth="300.0" style="-fx-background-color: #2d2d2d;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="random.client.LoginController">
+   <Label alignment="TOP_CENTER" text="Random Chat" textAlignment="CENTER" textFill="WHITE" AnchorPane.leftAnchor="64.0" AnchorPane.rightAnchor="64.0" AnchorPane.topAnchor="120.0">
+      <font>
+         <Font size="18.0" />
+      </font>
+   </Label>
+   <VBox alignment="TOP_CENTER" prefHeight="262.0" prefWidth="235.0" spacing="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="180.0">
+      <TextField fx:id="usernameField" maxWidth="160.0" minWidth="120.0" prefWidth="160.0" promptText="Username" style="-fx-background-color: #3d3d3d; -fx-border-color: #5d5d5d; -fx-text-fill: #ffffff;">
+         <cursor>
+            <Cursor fx:constant="TEXT" />
+         </cursor>
+      </TextField>
+      <PasswordField fx:id="passwordField" maxWidth="160.0" minWidth="120.0" prefWidth="160.0" promptText="Password" style="-fx-background-color: #3d3d3d; -fx-border-color: #5d5d5d; -fx-text-fill: #ffffff;">
+         <cursor>
+            <Cursor fx:constant="TEXT" />
+         </cursor>
+      </PasswordField>
+      <Button maxWidth="160.0" minWidth="120.0" mnemonicParsing="false" onAction="#onLogin" prefWidth="160.0" style="-fx-background-color: #1ddddd;" text="Login">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <Label fx:id="errorLabel" alignment="TOP_CENTER" textFill="WHITE" />
+   </VBox>
+   <Button layoutX="234.0" layoutY="14.0" mnemonicParsing="false" onAction="#onGoRegister" style="-fx-background-color: #1ddddd;" text="Register &gt;" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
+      <cursor>
+         <Cursor fx:constant="HAND" />
+      </cursor></Button>
+</AnchorPane>

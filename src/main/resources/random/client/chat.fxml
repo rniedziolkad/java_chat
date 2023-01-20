@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="288.0" minWidth="360.0" prefHeight="576.0" prefWidth="720.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="random.client.ChatController">
+    <VBox minWidth="160.0" prefWidth="200.0">
+      <Label prefHeight="32.0" prefWidth="200.0" style="-fx-background-color: #3d3d3d; -fx-border-color: #5d5d5d; -fx-border-width: 0 2 2 0;" text="Online users:" textFill="#1ddddd" VBox.vgrow="ALWAYS">
+         <font>
+            <Font size="14.0" />
+         </font>
+         <padding>
+            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+         </padding>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Label>
+        <ListView fx:id="lvOnlineUser" focusTraversable="false" prefWidth="200.0" style="-fx-background-color: #3d3d3d; -fx-control-inner-background: transparent; -fx-border-color: #5d5d5d; -fx-border-width: 0 2 0 0;" stylesheets="@chat.css" VBox.vgrow="ALWAYS">
+         <padding>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </padding></ListView>
+        <HBox prefHeight="56.0" spacing="4.0" style="-fx-background-color: #3d3d3d; -fx-border-color: #5d5d5d; -fx-border-width: 2 2 0 0;">
+            <VBox prefHeight="40.0" prefWidth="140.0">
+                <HBox.margin>
+                    <Insets bottom="6.0" left="8.0" top="6.0" />
+                </HBox.margin>
+                <Label fx:id="userLabel" minWidth="80.0" prefHeight="18.0" prefWidth="140.0" text="Username" textAlignment="CENTER" textFill="#1ddddd" VBox.vgrow="ALWAYS">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <effect>
+                        <DropShadow />
+                    </effect>
+                </Label>
+                <Label prefHeight="20.0" prefWidth="80.0" text="ONLINE" textFill="WHITE" VBox.vgrow="ALWAYS">
+                    <font>
+                        <Font size="10.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets left="4.0" />
+                    </VBox.margin>
+                </Label>
+            </VBox>
+            <AnchorPane prefHeight="56.0">
+                <HBox.margin>
+                    <Insets bottom="6.0" left="4.0" right="4.0" top="6.0" />
+                </HBox.margin>
+                <Button minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#onLogout" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;" AnchorPane.topAnchor="4.0">
+                    <graphic>
+                        <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                            <effect>
+                                <DropShadow height="2.0" radius="0.5" width="2.0" />
+                            </effect>
+                            <Image url="@icons/sign-out.png" />
+                        </ImageView>
+                    </graphic>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+            </AnchorPane>
+        </HBox>
+    </VBox>
+    <VBox HBox.hgrow="ALWAYS">
+        <ListView fx:id="chatMessagesList" focusTraversable="false" style="-fx-background-color: #2d2d2d; -fx-control-inner-background: transparent;" stylesheets="@chat.css" VBox.vgrow="ALWAYS">
+            <effect>
+                <InnerShadow blurType="GAUSSIAN" height="64.0" offsetY="-2.0" radius="15.5" width="0.0">
+                    <color>
+                        <Color red="0.11372549086809158" green="0.11372549086809158" blue="0.11372549086809158" opacity="0.9800000190734863" />
+                    </color>
+                </InnerShadow>
+            </effect>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </padding>
+        </ListView>
+        <HBox minHeight="-Infinity" prefHeight="56.0" style="-fx-background-color: #3d3d3d; -fx-border-color: #5d5d5d; -fx-border-width: 2 0 0 0;">
+            <TextField fx:id="messageInput" maxHeight="40.0" onAction="#onSend" prefHeight="40.0" promptText="Write your message here..." style="-fx-border-color: #5d5d5d; -fx-border-width: 1; -fx-text-fill: #fff; -fx-background-color: #444; -fx-prompt-text-fill: #aaa;" HBox.hgrow="ALWAYS">
+                <HBox.margin>
+                    <Insets bottom="8.0" left="16.0" right="16.0" top="8.0" />
+                </HBox.margin>
+                <effect>
+                    <InnerShadow height="24.0" radius="5.5" width="0.0">
+                        <color>
+                            <Color red="0.364705890417099" green="0.364705890417099" blue="0.364705890417099" />
+                        </color>
+                    </InnerShadow>
+                </effect>
+                <cursor>
+                    <Cursor fx:constant="TEXT" />
+                </cursor>
+            </TextField>
+            <AnchorPane>
+                <padding>
+                    <Insets bottom="12.0" left="8.0" right="16.0" top="12.0" />
+                </padding>
+                <Button maxHeight="32.0" maxWidth="32.0" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#onSend" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;" textFill="#1ddddd" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <graphic>
+                        <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                            <effect>
+                                <DropShadow height="4.0" radius="1.5" width="4.0" />
+                            </effect>
+                            <Image url="@icons/right-arrow.png" />
+                        </ImageView>
+                    </graphic>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+            </AnchorPane>
+        </HBox>
+    </VBox>
+</HBox>

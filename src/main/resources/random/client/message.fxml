@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox minWidth="0" prefWidth="1" spacing="8" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <Label fx:id="username" minWidth="-Infinity" text="Username" textFill="#1ddddd" />
+    <Label textFill="WHITE" wrapText="true" HBox.hgrow="NEVER" />
+   <padding>
+      <Insets bottom="2.0" top="2.0" />
+   </padding>
+</HBox>
