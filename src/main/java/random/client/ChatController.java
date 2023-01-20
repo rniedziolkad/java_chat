@@ -25,6 +25,8 @@ public class ChatController implements MessageListener, UserEventListener{
     private ListView<HBox> chatMessagesList;
     @FXML
     private ListView<String> lvOnlineUser;
+    @FXML
+    private Label userLabel;
 
     @FXML
     protected void onSend(){
@@ -47,6 +49,10 @@ public class ChatController implements MessageListener, UserEventListener{
 
     public void setClient(Client client) {
         this.client = client;
+        client.registerUserEventListener(this);
+        client.registerMessageListener(this);
+        client.startReceiver();
+        userLabel.setText(client.getUser());
     }
     @Override
     public void notifyAboutNewMessage(String fromUser, String message) {
@@ -56,7 +62,7 @@ public class ChatController implements MessageListener, UserEventListener{
                 messageHBox = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("message.fxml")));
                 Label userLabel = (Label) messageHBox.getChildren().get(0);
                 Label messageLabel = (Label) messageHBox.getChildren().get(1);
-                userLabel.setText(fromUser);
+                userLabel.setText(fromUser+":");
                 messageLabel.setText(message);
             } catch (IOException e) {
                 System.err.println(e.getMessage());
@@ -67,7 +73,8 @@ public class ChatController implements MessageListener, UserEventListener{
 
     @Override
     public void userJoin(String user) {
-        Platform.runLater(()-> onlineUsers.add(user));
+        if(!user.equals(client.getUser()))
+            Platform.runLater(()-> onlineUsers.add(user));
     }
 
     @Override

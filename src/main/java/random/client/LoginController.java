@@ -1,8 +1,13 @@
 package random.client;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 
@@ -12,6 +17,8 @@ public class LoginController {
     private TextField usernameField;
     @FXML
     private PasswordField passwordField;
+    @FXML
+    private Label errorLabel;
 
     @FXML
     protected void onLogin(){
@@ -24,10 +31,20 @@ public class LoginController {
         }
         try {
             client.login(username, password);
+            Stage stage = (Stage) errorLabel.getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("chat.fxml"));
+            Parent main = loader.load();
+            ChatController controller = loader.getController();
+            controller.setClient(client);
+
+            Scene scene = new Scene(main);
+            stage.setScene(scene);
+            stage.show();
+
         } catch (IOException e) {
             System.err.println("Login failed: "+e.getMessage());
         } catch (AuthError e) {
-            System.out.println(e.getMessage());
+            errorLabel.setText(e.getMessage());
         }
     }
 

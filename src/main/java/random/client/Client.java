@@ -34,11 +34,11 @@ public class Client implements AutoCloseable{
         messageListeners.remove(listener);
     }
 
-    public void registerUserEvenListener(UserEventListener listener){
+    public void registerUserEventListener(UserEventListener listener){
         userEventListeners.add(listener);
     }
 
-    public void removeUserEvenListener(UserEventListener listener){
+    public void removeUserEventListener(UserEventListener listener){
         userEventListeners.remove(listener);
     }
 
@@ -69,8 +69,6 @@ public class Client implements AutoCloseable{
             this.user = username;
             System.out.println("Logged in as "+username);
             this.receiver = new ClientReceiver(this);
-            this.receiver.start();
-
 
             return;
         }
@@ -131,6 +129,14 @@ public class Client implements AutoCloseable{
         if(message != null && !message.isEmpty() && !message.isBlank()){
             writer.println("BROADCAST "+message);
         }
+    }
+
+    public String getUser(){
+        return this.user;
+    }
+
+    public void startReceiver(){
+        this.receiver.start();
     }
 
     @Override

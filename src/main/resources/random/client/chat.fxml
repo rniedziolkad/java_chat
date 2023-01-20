@@ -31,7 +31,7 @@
                 <HBox.margin>
                     <Insets bottom="6.0" left="8.0" top="6.0" />
                 </HBox.margin>
-                <Label minWidth="80.0" prefHeight="18.0" prefWidth="140.0" text="Username" textAlignment="CENTER" textFill="#1ddddd" VBox.vgrow="ALWAYS">
+                <Label fx:id="userLabel" minWidth="80.0" prefHeight="18.0" prefWidth="140.0" text="Username" textAlignment="CENTER" textFill="#1ddddd" VBox.vgrow="ALWAYS">
                     <font>
                         <Font size="14.0" />
                     </font>
