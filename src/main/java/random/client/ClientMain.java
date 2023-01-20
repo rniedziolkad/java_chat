@@ -33,7 +33,7 @@ public class ClientMain extends Application {
             stage.setTitle("Random Chat");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("login.fxml"));
             Parent main = loader.load();
-            ChatController controller = loader.getController();
+            LoginController controller = loader.getController();
             controller.setClient(client);
 
             Scene scene = new Scene(main);
