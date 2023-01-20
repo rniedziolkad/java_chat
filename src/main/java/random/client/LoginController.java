@@ -19,6 +19,7 @@ public class LoginController {
     private PasswordField passwordField;
     @FXML
     private Label errorLabel;
+    private Stage stage;
 
     @FXML
     protected void onLogin(){
@@ -31,16 +32,15 @@ public class LoginController {
         }
         try {
             client.login(username, password);
-            Stage stage = (Stage) errorLabel.getScene().getWindow();
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("chat.fxml"));
             Parent main = loader.load();
             ChatController controller = loader.getController();
             controller.setClient(client);
+            controller.setStage(stage);
 
             Scene scene = new Scene(main);
             stage.setScene(scene);
-            stage.show();
-
         } catch (IOException e) {
             System.err.println("Login failed: "+e.getMessage());
         } catch (AuthError e) {
@@ -50,6 +50,10 @@ public class LoginController {
 
     public void setClient(Client client){
         this.client = client;
+    }
+
+    public void setStage(Stage stage){
+        this.stage = stage;
     }
 
 }

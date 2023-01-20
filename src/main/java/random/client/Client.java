@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Client implements AutoCloseable{
     private final Socket socket;
@@ -15,15 +15,15 @@ public class Client implements AutoCloseable{
     private ClientReceiver receiver;
     private String user;
 
-    private final ArrayList<UserEventListener> userEventListeners;
-    private final ArrayList<MessageListener> messageListeners;
+    private final CopyOnWriteArrayList<UserEventListener> userEventListeners;
+    private final CopyOnWriteArrayList<MessageListener> messageListeners;
 
     public Client(String host, int port) throws IOException {
         this.socket = new Socket(host, port);
         this.writer = new PrintWriter(socket.getOutputStream(), true);
         this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        this.userEventListeners = new ArrayList<>();
-        this.messageListeners = new ArrayList<>();
+        this.userEventListeners = new CopyOnWriteArrayList<>();
+        this.messageListeners = new CopyOnWriteArrayList<>();
         this.user = null;
     }
 
@@ -87,6 +87,9 @@ public class Client implements AutoCloseable{
     }
 
     private void userExit(){
+        for (UserEventListener listener: userEventListeners) {
+            listener.userExit(user);
+        }
         this.user = null;
         System.out.println("Logged out of app");
     }

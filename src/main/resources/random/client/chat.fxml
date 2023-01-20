@@ -11,7 +11,7 @@
 
 <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="288.0" minWidth="360.0" prefHeight="576.0" prefWidth="720.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="random.client.ChatController">
     <VBox minWidth="160.0" prefWidth="200.0">
-      <Label prefHeight="32.0" prefWidth="200.0" style="-fx-background-color: #3d3d3d; -fx-border-color: #5d5d5d; -fx-border-width: 0 2 2 0;" text="Online" textFill="#1ddddd" VBox.vgrow="ALWAYS">
+      <Label prefHeight="32.0" prefWidth="200.0" style="-fx-background-color: #3d3d3d; -fx-border-color: #5d5d5d; -fx-border-width: 0 2 2 0;" text="Online users:" textFill="#1ddddd" VBox.vgrow="ALWAYS">
          <font>
             <Font size="14.0" />
          </font>

@@ -5,10 +5,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,6 +30,12 @@ public class ChatController implements MessageListener, UserEventListener{
     private ListView<String> lvOnlineUser;
     @FXML
     private Label userLabel;
+
+    private Stage stage;
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
 
     @FXML
     protected void onSend(){
@@ -79,6 +88,24 @@ public class ChatController implements MessageListener, UserEventListener{
 
     @Override
     public void userExit(String user) {
+        if(user.equals(client.getUser())){
+            client.removeMessageListener(this);
+            client.removeUserEventListener(this);
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("login.fxml"));
+                Parent loginPage = loader.load();
+                LoginController controller = loader.getController();
+                controller.setClient(client);
+                controller.setStage(stage);
+
+                Scene scene = new Scene(loginPage);
+                Platform.runLater(()-> stage.setScene(scene));
+            } catch (IOException e) {
+                System.err.println("Error: "+e.getMessage());
+            }
+
+
+        }
         Platform.runLater(()-> onlineUsers.remove(user));
     }
 }

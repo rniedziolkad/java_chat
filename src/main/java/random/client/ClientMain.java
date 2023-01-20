@@ -35,6 +35,7 @@ public class ClientMain extends Application {
             Parent loginPage = loader.load();
             LoginController controller = loader.getController();
             controller.setClient(client);
+            controller.setStage(stage);
 
             Scene scene = new Scene(loginPage);
             stage.setScene(scene);
