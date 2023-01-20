@@ -10,9 +10,7 @@ public class ClientReceiver extends Thread{
 
     @Override
     public void run() {
-        System.out.println("Receiver opened");
         owner.readCommands();
-        System.out.println("Receiver closed");
     }
 
 

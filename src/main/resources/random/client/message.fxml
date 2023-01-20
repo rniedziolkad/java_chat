@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox minWidth="0" prefWidth="1" spacing="4" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+<HBox minWidth="0" prefWidth="1" spacing="8" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
     <Label fx:id="username" minWidth="-Infinity" text="Username" textFill="#1ddddd" />
     <Label textFill="WHITE" wrapText="true" HBox.hgrow="NEVER" />
    <padding>

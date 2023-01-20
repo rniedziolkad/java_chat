@@ -140,7 +140,7 @@ public class ClientHandler extends Thread{
             userManager.register(tokens[0], tokens[1]);
             writer.println("REGISTER_SUCCESS "+tokens[0]);
         } catch (UserExistsException e) {
-            writer.println(e.getMessage());
+            writer.println("ERROR "+e.getMessage());
         } catch (SQLException e) {
             System.out.println("Register error: "+e.getMessage());
             writer.println("ERROR Server side error. Unable to register user");

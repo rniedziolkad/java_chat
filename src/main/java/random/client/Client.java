@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Client implements AutoCloseable{
     private final Socket socket;
@@ -15,15 +15,15 @@ public class Client implements AutoCloseable{
     private ClientReceiver receiver;
     private String user;
 
-    private final ArrayList<UserEventListener> userEventListeners;
-    private final ArrayList<MessageListener> messageListeners;
+    private final CopyOnWriteArrayList<UserEventListener> userEventListeners;
+    private final CopyOnWriteArrayList<MessageListener> messageListeners;
 
     public Client(String host, int port) throws IOException {
         this.socket = new Socket(host, port);
         this.writer = new PrintWriter(socket.getOutputStream(), true);
         this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        this.userEventListeners = new ArrayList<>();
-        this.messageListeners = new ArrayList<>();
+        this.userEventListeners = new CopyOnWriteArrayList<>();
+        this.messageListeners = new CopyOnWriteArrayList<>();
         this.user = null;
     }
 
@@ -34,11 +34,11 @@ public class Client implements AutoCloseable{
         messageListeners.remove(listener);
     }
 
-    public void registerUserEvenListener(UserEventListener listener){
+    public void registerUserEventListener(UserEventListener listener){
         userEventListeners.add(listener);
     }
 
-    public void removeUserEvenListener(UserEventListener listener){
+    public void removeUserEventListener(UserEventListener listener){
         userEventListeners.remove(listener);
     }
 
@@ -60,28 +60,38 @@ public class Client implements AutoCloseable{
         }
     }
 
-    public void login(String username, String password) throws IOException, AuthError {
+    public boolean login(String username, String password) throws IOException, AuthError {
         writer.println("LOGIN "+username+" "+password);
         String response = reader.readLine();
         String errMsg;
         if(response.equals("LOGIN_SUCCESS "+username)){
-
             this.user = username;
-            System.out.println("Logged in as "+username);
             this.receiver = new ClientReceiver(this);
-            this.receiver.start();
-
-
-            return;
-        }
-        else if(response.startsWith("ERROR")) {
+            return true;
+        } else if(response.startsWith("ERROR")) {
             errMsg = response.split("\\s+", 2)[1];
             throw new AuthError(errMsg);
-        }
-        else
+        } else
             errMsg = "Incorrect message received: "+response;
 
         System.err.println(errMsg);
+        return false;
+    }
+
+    public boolean register(String username, String password) throws IOException, AuthError {
+        writer.println("REGISTER "+username+" "+password);
+        String response = reader.readLine();
+        String errMsg;
+        if(response.equals("REGISTER_SUCCESS "+username)){
+            return true;
+        } else if (response.startsWith("ERROR")) {
+            errMsg = response.split("\\s+", 2)[1];
+            throw new AuthError(errMsg);
+        } else
+            errMsg = "Incorrect message received: "+response;
+
+        System.err.println(errMsg);
+        return false;
     }
 
     public void logout() {
@@ -89,8 +99,11 @@ public class Client implements AutoCloseable{
     }
 
     private void userExit(){
+        for (UserEventListener listener: userEventListeners) {
+            listener.userExit(user);
+        }
         this.user = null;
-        System.out.println("Logged out of app");
+        this.receiver = null;
     }
 
     public void readCommands(){
@@ -119,7 +132,6 @@ public class Client implements AutoCloseable{
                     }
                 }
             }
-
             close();
         }catch (IOException e){
             System.out.println("error reading: "+e.getMessage());
@@ -131,6 +143,14 @@ public class Client implements AutoCloseable{
         if(message != null && !message.isEmpty() && !message.isBlank()){
             writer.println("BROADCAST "+message);
         }
+    }
+
+    public String getUser(){
+        return this.user;
+    }
+
+    public void startReceiver(){
+        this.receiver.start();
     }
 
     @Override
