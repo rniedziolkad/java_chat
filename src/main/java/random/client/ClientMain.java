@@ -31,6 +31,7 @@ public class ClientMain extends Application {
             Parent main = loader.load();
             ChatController controller = loader.getController();
             controller.setClient(client);
+            client.registerMessageListener(controller);
             Scene scene = new Scene(main);
 
             stage.setScene(scene);

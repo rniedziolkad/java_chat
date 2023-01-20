@@ -1,5 +1,6 @@
 package random.client;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,7 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class ChatController{
+public class ChatController implements MessageListener{
     private Client client;
     @FXML
     private TextField messageInput;
@@ -29,18 +30,7 @@ public class ChatController{
         if(client != null) {
             client.send(message);
         }
-        HBox messageHBox = new HBox();
-        try {
-            messageHBox = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("message.fxml")));
-            Label messageLabel = (Label) messageHBox.getChildren().get(1);
-            messageLabel.setText(message);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-        messages.add(messageHBox);
-        chatMessagesList.scrollTo(messages.size());
     }
-
 
     public void initialize() {
         chatMessagesList.setItems(messages);
@@ -48,5 +38,23 @@ public class ChatController{
 
     public void setClient(Client client) {
         this.client = client;
+    }
+    @Override
+    public void notifyAboutNewMessage(String fromUser, String message) {
+        System.out.println("IN CONTROLLER");
+        Platform.runLater(()->{
+            HBox messageHBox = new HBox();
+            try {
+                messageHBox = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("message.fxml")));
+                Label userLabel = (Label) messageHBox.getChildren().get(0);
+                Label messageLabel = (Label) messageHBox.getChildren().get(1);
+                userLabel.setText(fromUser);
+                messageLabel.setText(message);
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+            messages.add(messageHBox);
+        });
+
     }
 }

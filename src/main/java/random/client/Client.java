@@ -1,10 +1,12 @@
 package random.client;
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Client implements AutoCloseable{
     private final Socket socket;
@@ -12,11 +14,50 @@ public class Client implements AutoCloseable{
     private final BufferedReader reader;
     private ClientReceiver receiver;
     private String user;
+
+    private final ArrayList<UserEventListener> userEventListeners;
+    private final ArrayList<MessageListener> messageListeners;
+
     public Client(String host, int port) throws IOException {
         this.socket = new Socket(host, port);
         this.writer = new PrintWriter(socket.getOutputStream(), true);
         this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.userEventListeners = new ArrayList<>();
+        this.messageListeners = new ArrayList<>();
         this.user = null;
+    }
+
+    public void registerMessageListener(MessageListener listener){
+        messageListeners.add(listener);
+    }
+    public void removeMessageListener(MessageListener listener){
+        messageListeners.remove(listener);
+    }
+
+    public void registerUserEvenListener(UserEventListener listener){
+        userEventListeners.add(listener);
+    }
+
+    public void removeUserEvenListener(UserEventListener listener){
+        userEventListeners.remove(listener);
+    }
+
+    private void notifyMessageListeners(String user, String message){
+        for(MessageListener listener: messageListeners){
+            listener.notifyAboutNewMessage(user, message);
+        }
+    }
+
+    private void userEventListenersJoin(String user){
+        for(UserEventListener listener: userEventListeners){
+            listener.userJoin(user);
+        }
+    }
+
+    private void setUserEventListenersExit(String user){
+        for(UserEventListener listener: userEventListeners){
+            listener.userExit(user);
+        }
     }
     public void login(String username, String password) throws IOException {
         writer.println("LOGIN "+username+" "+password);
@@ -26,7 +67,7 @@ public class Client implements AutoCloseable{
             this.user = username;
             System.out.println("Logged in as "+username);
             this.receiver = new ClientReceiver(this);
-            receiver.start();
+            this.receiver.start();
             return;
         }
         else if(response.startsWith("ERROR"))
@@ -54,6 +95,9 @@ public class Client implements AutoCloseable{
                 if(parts[0].equals("LOGOUT_SUCCESS")) {
                     userExit();
                     return;
+                } else if (parts[0].equals("MSG")) {
+                    parts = parts[1].split("\\s+", 2);
+                    notifyMessageListeners(parts[0], parts[1]);
                 }
 
                 System.out.println("Received message:");
